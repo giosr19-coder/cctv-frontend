@@ -1,0 +1,103 @@
+ .App {
+   font-family: sans-serif;
+   text-align: center;
+   padding: 20px;
+ }
+
+ .message {
+   color: #d9534f;
+   font-weight: bold;
+ }
+
+ .camera-list {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 20px;
+   justify-content: center;
+   margin-top: 20px;
+ }
+
+ .camera-card {
+   border: 1px solid #ccc;
+   border-radius: 8px;
+   padding: 15px;
+   width: 250px;
+   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+ }
+
+ .camera-card h2 {
+   margin-top: 0;
+ }
+
+ .status-online {
+   color: #5cb85c;
+   font-weight: bold;
+ }
+
+ .status-offline {
+   color: #d9534f;
+   font-weight: bold;
+ }
+ /* src/App.css */
+
+/* ... (tus estilos existentes) ... */
+
+.snapshot-button {
+  margin-top: 10px;
+  padding: 8px 12px;
+  border: 1px solid #007bff;
+  background-color: white;
+  color: #007bff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.snapshot-button:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-content img {
+  max-width: 100%;
+  max-height: calc(90vh - 80px); /* Ajusta para dar espacio al botón */
+  object-fit: contain;
+}
+
+.modal-close-button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  border: none;
+  background-color: #6c757d;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-close-button:hover {
+  background-color: #5a6268;
+}

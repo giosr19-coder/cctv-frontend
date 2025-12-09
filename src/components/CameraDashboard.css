@@ -1,0 +1,574 @@
+/* src/components/CameraDashboard.css */
+
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+  background-color: #f0f2f5;
+  font-family: 'Segoe UI', sans-serif;
+  overflow: hidden; /* Evita scroll en el body */
+}
+
+/* --- SIDEBAR (Barra Lateral) --- */
+.sidebar {
+  width: 260px;
+  background-color: #2c3e50;
+  color: rgb(255, 255, 255);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.sidebar-header {
+  padding: 30px;
+  background-color: #df1631;
+  text-align: center;
+}
+
+.sidebar-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.dvr-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.dvr-item {
+  padding: 20px 20px;
+  border-bottom: 1px solid #34495e;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.dvr-item:hover {
+  background-color: #34495e;
+}
+
+.dvr-item.active {
+  background-color: #2888c9; /* Azul para el seleccionado */
+  border-left: 4px solid #fff;
+}
+
+.logout-btn {
+  margin: 20px;
+  padding: 10px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+/* --- MAIN CONTENT (Grilla de Canales) --- */
+.main-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto; /* Scroll solo en el área de cámaras */
+}
+
+.top-bar {
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #58d60f;
+}
+
+.channels-grid {
+  display: grid;
+  /* Grilla responsive: crea columnas de min 300px */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.channel-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  overflow: hidden;
+  border: 1px solid #ddd;
+}
+
+.video-box {
+  background-color: #000;
+  aspect-ratio: 16/9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.channel-info {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.status-dot {
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  background-color: #ccc;
+  display: inline-block;
+}
+.online { background-color: #2ecc71; }
+
+.btn-snapshot {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* --- MODAL --- */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: rgb(255, 255, 255);
+  padding: 10px;
+  border-radius: 8px;
+  max-width: 90%;
+  max-height: 90%;
+  position: relative;
+}
+
+.modal-content img {
+  max-width: 100%;
+  max-height: 80vh;
+  display: block;
+}
+
+.close-modal {
+  margin-top: 10px;
+  width: 100%;
+  padding: 10px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+/* --- ESTILOS NUEVOS PARA CALENDARIO --- */
+
+/* Botón pequeño de calendario en la sidebar */
+.btn-calendar-sidebar {
+  background: transparent;
+  border: 1px solid #7f8c8d;
+  color: #bdc3c7;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 4px 8px;
+  margin-left: 10px;
+  transition: all 0.2s;
+  font-size: 1.2rem;
+}
+
+.btn-calendar-sidebar:hover {
+  background-color: #f1c40f; /* Amarillo al pasar el mouse */
+  color: #000;
+  border-color: #f1c40f;
+}
+
+/* Ajuste para que el botón y el texto convivan bien en la lista */
+.dvr-item-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* Modal del Calendario */
+.calendar-header {
+  text-align: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); /* 7 días por semana */
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.calendar-day {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  font-weight: bold;
+  color: #ccc;
+  border: 1px solid #ddd;
+}
+
+/* Día con grabación (Verde) */
+.day-recorded {
+  background-color: #2ecc71;
+  color: white;
+  border-color: #27ae60;
+  box-shadow: 0 2px 4px rgba(46, 204, 113, 0.4);
+}
+
+.loading-calendar {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+.nav-btn {
+  background: #34495e;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.nav-btn:hover {
+  background: #2c3e50;
+}
+/* --- ESTILOS PARA INFORMACIÓN DE DISPOSITIVO --- */
+
+.dvr-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 5px;
+  font-size: 0.9rem;
+  color: #7f8c8d;
+}
+
+.tag-brand {
+  background-color: #2c3e50;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+.tag-model {
+  background-color: #95a5a6;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+
+.device-subtitle {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #7f8c8d;
+  font-weight: normal;
+}
+/* ANIMACIONES */
+@keyframes pulse-green {
+  0% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7); }
+  70% { box-shadow: 0 0 0 6px rgba(46, 204, 113, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
+}
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+/* TARJETAS MEJORADAS */
+.channel-card {
+  background: #1e272e; /* Gris oscuro azulado */
+  border: 1px solid #2c3e50;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+
+.channel-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+  border-color: #3498db;
+}
+
+/* VIDEO BOX Y EFECTOS */
+.video-box {
+  aspect-ratio: 16/9;
+  background-color: #000;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.live-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Indicador LIVE rojo en la esquina del video */
+.live-indicator {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(231, 76, 60, 0.8);
+  color: white;
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  border-radius: 4px;
+  animation: pulse-red 2s infinite; /* Opcional */
+}
+
+/* Placeholder cuando no hay video */
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #555;
+  gap: 10px;
+}
+
+.icon-signal {
+  font-size: 2rem;
+  opacity: 0.5;
+}
+
+/* INFO BARRA INFERIOR */
+.channel-info {
+  padding: 10px;
+  background: #151b22;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #2c3e50;
+  color: #ecf0f1;
+}
+
+.channel-text strong {
+  display: block;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+/* PUNTO PULSANTE (Estado) */
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 2px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-dot.green {
+  background-color: #2ecc71;
+  animation: pulse-green 2s infinite; /* Animación de latido */
+}
+
+.status-dot.red {
+  background-color: #e74c3c;
+}
+
+/* SIDEBAR MÁS ELEGANTE */
+.sidebar-header {
+  background: linear-gradient(180deg, #1a252f 0%, #151d24 100%);
+  border-bottom: 1px solid #34495e;
+}
+
+.dvr-item.active {
+  background: linear-gradient(90deg, #2980b9 0%, #2c3e50 100%);
+  border-left: 4px solid #3498db;
+}
+/* --- ESTILOS PARA LA TARJETA EN VIVO (LiveCameraCard) --- */
+
+.channel-card {
+  background: #1e272e; /* Fondo oscuro */
+  border: 1px solid #2c3e50;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.channel-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  border-color: #3498db;
+}
+
+.video-box {
+  aspect-ratio: 16/9;
+  background-color: #000;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.live-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.live-indicator {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: rgba(231, 76, 60, 0.9);
+  color: white;
+  padding: 2px 6px;
+  font-size: 0.6rem;
+  font-weight: bold;
+  border-radius: 3px;
+  letter-spacing: 1px;
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.channel-info {
+  padding: 10px;
+  background: #151b22;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #2c3e50;
+  color: #ecf0f1;
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 3px;
+  font-size: 0.75rem;
+  color: #bdc3c7;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-dot.green { background-color: #2ecc71; box-shadow: 0 0 5px #2ecc71; }
+.status-dot.red { background-color: #e74c3c; }
+
+.btn-snapshot {
+  background: #34495e;
+  border: none;
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-snapshot:hover {
+  background: #3498db;
+}
+/* --- BARRA DE HERRAMIENTAS Y FILTROS --- */
+
+.controls-bar {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: #1a252f;
+  padding: 8px 15px;
+  border-radius: 8px;
+  border: 1px solid #34495e;
+}
+
+.filter-toggle {
+  background-color: #2c3e50;
+  border: 1px solid #7f8c8d;
+  color: #bdc3c7;
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.filter-toggle:hover {
+  border-color: #3498db;
+  color: white;
+}
+
+.filter-toggle.active {
+  background-color: #27ae60; /* Verde cuando está activo */
+  border-color: #2ecc71;
+  color: white;
+  box-shadow: 0 0 8px rgba(46, 204, 113, 0.4);
+}
+
+.status-counter {
+  font-size: 0.9rem;
+  color: #ecf0f1;
+  font-weight: bold;
+}
+
+.status-counter small {
+  color: #95a5a6;
+  font-weight: normal;
+  margin-left: 5px;
+}
+.btn-report {
+  background-color: #2980b9;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background 0.2s;
+  margin-right: 10px; /* Separación del contador */
+}
+
+.btn-report:hover {
+  background-color: #3498db;
+}
