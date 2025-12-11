@@ -2,10 +2,11 @@ import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import "./CameraDashboard.css";
 import LiveCameraCard from "./LiveCameraCard"; 
+import AnalyticsModal from "./AnalyticsModal"; // <--- IMPORTANTE: Componente de Gráficos
 
 const API_URL = "http://127.0.0.1:8000";
 
-// Logo de MCT SAS
+// Logo de la empresa
 const LOGO_URL = "https://media.licdn.com/dms/image/v2/D560BAQG9Eli3VlRvLg/company-logo_200_200/company-logo_200_200/0/1718917065236/mct_sas_logo?e=2147483647&v=beta&t=KabRMRCFsbBga051Fj3_uJImhUgy01Xpfhi3H0YWxh0";
 
 function CameraDashboard({ token, onLogout }) {
@@ -13,7 +14,10 @@ function CameraDashboard({ token, onLogout }) {
   const [dvrs, setDvrs] = useState([]);
   const [selectedDvr, setSelectedDvr] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [snapshotUrl, setSnapshotUrl] = useState(null);
+  
+  // --- ESTADOS MODALES ---
+  const [snapshotUrl, setSnapshotUrl] = useState(null); // Foto grande
+  const [showAnalytics, setShowAnalytics] = useState(false); // Tablero de Control (NUEVO)
 
   // --- ESTADOS CALENDARIO ---
   const [showCalendar, setShowCalendar] = useState(false);
@@ -55,7 +59,7 @@ function CameraDashboard({ token, onLogout }) {
 
   // --- HANDLERS ---
 
-  // Recibe actualización del hijo (LiveCameraCard)
+  // Recibe actualización del hijo (LiveCameraCard) en tiempo real
   const handleStatusChange = useCallback((channelId, isOnline) => {
     setChannelStatuses(prev => {
         if (prev[channelId] === isOnline) return prev;
@@ -73,7 +77,7 @@ function CameraDashboard({ token, onLogout }) {
     }
   };
 
-  // --- FUNCIÓN DE DESCARGA DE REPORTE (CORREGIDA) ---
+  // --- FUNCIÓN DE DESCARGA DE REPORTE CSV ---
   const handleDownloadReport = async () => {
     if (!selectedDvr) return;
     
@@ -83,15 +87,13 @@ function CameraDashboard({ token, onLogout }) {
     try {
       console.log("Solicitando reporte al backend...");
       const response = await axios.get(`${API_URL}/cameras/${selectedDvr.id}/report`, {
-        responseType: 'blob', // Clave para descargar archivos
+        responseType: 'blob',
       });
 
-      // Crear enlace de descarga virtual
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
       
-      // Intentar obtener nombre del archivo
       let fileName = `Reporte_${selectedDvr.name}.csv`;
       const disposition = response.headers['content-disposition'];
       if (disposition && disposition.indexOf('attachment') !== -1) {
@@ -106,11 +108,10 @@ function CameraDashboard({ token, onLogout }) {
       document.body.appendChild(link);
       link.click();
       link.remove();
-      console.log("Reporte descargado correctamente.");
 
     } catch (error) {
       console.error("Error descargando reporte:", error);
-      alert("Error al generar el reporte. Verifica que el Backend tenga 'import csv' e 'import io'.");
+      alert("Error al generar el reporte. Verifica la conexión con el DVR.");
     }
   };
 
@@ -215,6 +216,18 @@ function CameraDashboard({ token, onLogout }) {
 
                 {/* BARRA DE CONTROLES */}
                 <div className="controls-bar">
+                  
+                  {/* BOTÓN NUEVO: ANALÍTICA (ESTADÍSTICAS) */}
+                  <button 
+                    className="btn-report" 
+                    onClick={() => setShowAnalytics(true)}
+                    style={{backgroundColor: '#8e44ad'}} 
+                    title="Ver Tablero de Control y Gráficos"
+                  >
+                    📊 Estadísticas
+                  </button>
+
+                  {/* Botón de Reporte CSV */}
                   <button className="btn-report" onClick={handleDownloadReport} title="Descargar CSV">
                     📄 Informe
                   </button>
@@ -256,7 +269,7 @@ function CameraDashboard({ token, onLogout }) {
         ) : <div style={{padding:40}}>Seleccione un DVR</div>}
       </main>
 
-      {/* MODALES */}
+      {/* MODAL SNAPSHOT */}
       {snapshotUrl && (
         <div className="modal-overlay" onClick={() => setSnapshotUrl(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -266,13 +279,14 @@ function CameraDashboard({ token, onLogout }) {
         </div>
       )}
 
+      {/* MODAL CALENDARIO */}
       {showCalendar && calendarDvr && (
         <div className="modal-overlay" onClick={() => setShowCalendar(false)}>
           <div className="modal-content" style={{ width: '450px' }} onClick={(e) => e.stopPropagation()}>
             <div className="calendar-header" style={{display:'flex', flexDirection:'column', gap:'10px'}}>
               <div style={{textAlign:'center'}}>
                   <h3 style={{margin:0}}>Grabaciones: {calendarDvr.name}</h3>
-                  <p className="device-subtitle">{calendarDvr.manufacturer || "DVR"} • {calendarDvr.model}</p>
+                  <p className="device-subtitle">{calendarDvr.manufacturer} • {calendarDvr.model}</p>
               </div>
               <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
                   <button className="nav-btn" onClick={() => changeMonth(-1)}>◀</button>
@@ -299,6 +313,16 @@ function CameraDashboard({ token, onLogout }) {
           </div>
         </div>
       )}
+
+      {/* --- MODAL DE ANALÍTICA (GRÁFICOS) --- */}
+      {showAnalytics && selectedDvr && (
+        <AnalyticsModal 
+            dvr={selectedDvr} 
+            token={token} 
+            onClose={() => setShowAnalytics(false)} 
+        />
+      )}
+
     </div>
   );
 }
